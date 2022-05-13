@@ -1,12 +1,34 @@
 import { StatusBar } from 'expo-status-bar'
 import { StyleSheet, Text, View } from 'react-native'
+import { StripeProvider } from '@stripe/stripe-react-native'
+import { useEffect, useState } from 'react'
 
-export default function App() {
+function App() {
+  const [publishableKey, setPublishableKey] = useState('')
+
+  const fetchPublishableKey = async () => {
+    try {
+      const key = await fetchKey() // fetch key from your server here
+      setPublishableKey(key)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  useEffect(() => {
+    fetchPublishableKey()
+  }, [])
+
   return (
-    <View style={styles.container}>
-      <Text>Testing123</Text>
-      <StatusBar style='auto' />
-    </View>
+    <StripeProvider
+      publishableKey={publishableKey}
+      merchantIdentifier='merchant.identifier'
+    >
+      <View style={styles.container}>
+        <Text>Testing123</Text>
+        <StatusBar style='auto' />
+      </View>
+    </StripeProvider>
   )
 }
 
@@ -18,3 +40,5 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 })
+
+export default App
